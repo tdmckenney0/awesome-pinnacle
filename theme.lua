@@ -33,6 +33,9 @@ theme.border_marked = "#6510CC"
 
 theme.hotkeys_modifiers_fg = "#2EB398"
 
+-- No Icons on the tab strip. 
+theme.tasklist_disable_icon = true
+
 -- There are other variable sets
 -- overriding the default one when
 -- defined, the sets are:
