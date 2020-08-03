@@ -80,6 +80,14 @@ awful.layout.layouts = {
 }
 -- }}}
 
+-- F1 -> F12 Launchers. 
+launchers = {
+    terminal,
+    filemanager,
+    browser,
+    gui_editor
+}
+
 -- {{{ Helper functions
 local function client_menu_toggle_fn()
     local instance = nil
@@ -254,9 +262,6 @@ globalkeys = gears.table.join(
               {description="Show Help", group="Awesome"}),
 
     -- Launcher
-    awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
-              {description = "Launch Terminal", group = "Launcher"}),
-
     awful.key({ "Control" }, "space", function() menubar.show() end,
               {description = "Toggle the menubar", group = "Launcher"}),
 
@@ -276,7 +281,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "Down",  function () awful.layout.inc( -1) end,
               {description = "Previous Layout", group = "Desktop"}),
 
-    awful.key({ modkey,           }, "space", awful.client.urgent.jumpto,
+    awful.key({ modkey,           }, "Return", awful.client.urgent.jumpto,
               {description = "Focus on Urgent Window", group = "Desktop"}),
             
     awful.key({ modkey,           }, "Tab",  function () awful.client.focus.byidx( 1) end,
@@ -296,36 +301,26 @@ globalkeys = gears.table.join(
 
     awful.key({ modkey, "Shift"   }, "Delete", function () awful.tag.incncol( -1, nil, true) end,
               {description = "Remove Column", group = "Desktop"})
-)
 
-globalkeysssss = gears.table.join(
+    -- Window Magic
+    --[[ awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
+              {description = "swap with next client by index", group = "Window"}),
 
-    -- Layout manipulation
-    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
-              {description = "swap with next client by index", group = "client"}),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
               {description = "swap with previous client by index", group = "client"}),
+
     awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end,
-              {description = "focus the next screen", group = "screen"}),
+              {description = "focus the next screen", group = "screen"}), 
+    
     awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
               {description = "focus the previous screen", group = "screen"}),
-    
-    
-    
 
-    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)                 end,
+    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05) end,
               {description = "increase master width factor", group = "layout"}),
-    awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)                 end,
+
+    awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05) end,
               {description = "decrease master width factor", group = "layout"}),
     
-    awful.key({ modkey     }, "b", function () awful.spawn(browser)          end,
-              {description = "launch Browser", group = "launcher"}),
-
-    
-              
-    awful.key({ modkey,           }, "e", function () awful.spawn(filemanager)            end,
-              {description = "launch filemanager", group = "launcher"}),
-
     awful.key({                   }, "Print", function () awful.spawn.with_shell("sleep 0.1 && /usr/bin/i3-scrot -d")   end,
               {description = "capture a screenshot", group = "screenshot"}),
     awful.key({"Control"          }, "Print", function () awful.spawn.with_shell("sleep 0.1 && /usr/bin/i3-scrot -w")   end,
@@ -343,7 +338,19 @@ globalkeysssss = gears.table.join(
                   end
               end,
               {description = "restore minimized", group = "client"})
+
+              ]]
 )
+
+-- Build out the launcher keys.
+for i = 1, 12 do
+    if launchers[i] ~= nil then
+        globalkeys = gears.table.join(globalkeys,
+            awful.key({ modkey     }, "F" .. i, function () awful.spawn(launchers[i]) end,
+                {description = "Launch " .. launchers[i], group = "Launcher"})
+        )
+    end
+end
 
 clientkeys = gears.table.join(
     awful.key({ modkey,           }, "f",
@@ -351,48 +358,48 @@ clientkeys = gears.table.join(
             c.fullscreen = not c.fullscreen
             c:raise()
         end,
-        {description = "toggle fullscreen", group = "client"}),
+        {description = "toggle fullscreen", group = "Window"}),
     awful.key({ modkey,           }, "x",      function (c) c:kill()                         end,
-              {description = "close", group = "client"}),
+              {description = "close", group = "Window"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
-              {description = "toggle floating", group = "client"}),
+              {description = "toggle floating", group = "Window"}),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
-              {description = "move to master", group = "client"}),
+              {description = "move to master", group = "Window"}),
     awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
-              {description = "move to screen", group = "client"}),
+              {description = "move to screen", group = "Window"}),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
-              {description = "toggle keep on top", group = "client"}),
+              {description = "toggle keep on top", group = "Window"}),
     awful.key({ modkey,           }, "n",
         function (c)
             -- The client currently has the input focus, so it cannot be
             -- minimized, since minimized clients can't have the focus.
             c.minimized = true
         end ,
-        {description = "minimize", group = "client"}),
+        {description = "minimize", group = "Window"}),
     awful.key({ modkey,           }, "m",
         function (c)
             c.maximized = not c.maximized
             c:raise()
         end ,
-        {description = "(un)maximize", group = "client"}),
+        {description = "(un)maximize", group = "Window"}),
     awful.key({ modkey, "Control" }, "m",
         function (c)
             c.maximized_vertical = not c.maximized_vertical
             c:raise()
         end ,
-        {description = "(un)maximize vertically", group = "client"}),
+        {description = "(un)maximize vertically", group = "Window"}),
     awful.key({ modkey, "Shift"   }, "m",
         function (c)
             c.maximized_horizontal = not c.maximized_horizontal
             c:raise()
         end ,
-        {description = "(un)maximize horizontally", group = "client"}),
+        {description = "(un)maximize horizontally", group = "Window"}),
     
     awful.key({ modkey, "Control" }, "t",
         function (c)
             awful.titlebar.toggle(c)
         end ,
-        {description = "Toggle Titlebar", group = "client"})
+        {description = "Toggle Titlebar", group = "Window"})
 )
 
 -- Bind all key numbers to tags.
