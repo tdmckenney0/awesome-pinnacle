@@ -173,7 +173,7 @@ local taglist_buttons = gears.table.join(
                 )
 
 local tasklist_buttons = gears.table.join(
-                     awful.button({ }, 1, function (c)
+                     awful.button({ modkey }, 1, function (c)
                                               if c == client.focus then
                                                   c.minimized = true
                                               else
@@ -189,11 +189,11 @@ local tasklist_buttons = gears.table.join(
                                                   c:raise()
                                               end
                                           end),
-                     awful.button({ }, 3, client_menu_toggle_fn()),
-                     awful.button({ }, 4, function ()
+                     awful.button({ modkey }, 3, client_menu_toggle_fn()),
+                     awful.button({ modkey }, 4, function ()
                                               awful.client.focus.byidx(1)
                                           end),
-                     awful.button({ }, 5, function ()
+                     awful.button({ modkey  }, 5, function ()
                                               awful.client.focus.byidx(-1)
                                           end))
 
@@ -212,10 +212,46 @@ awful.screen.connect_for_each_screen(function(s)
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
-	
-    -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
+    s.mytaskmanager = awful.popup {
+        widget = awful.widget.tasklist {
+            screen   = s,
+            filter   = awful.widget.tasklist.filter.currenttags,
+            buttons  = tasklist_buttons,
+            style    = {
+                shape = gears.shape.rectangle,
+            },
+            layout   = {
+                spacing = 5,
+                forced_num_rows = 1,
+                layout = wibox.layout.grid.horizontal
+            },
+            widget_template = {
+                {
+                    {
+                        id     = 'clienticon',
+                        widget = awful.widget.clienticon,
+                    },
+                    margins = 4,
+                    widget  = wibox.container.margin,
+                },
+                id              = 'background_role',
+                forced_width    = 48,
+                forced_height   = 48,
+                widget          = wibox.container.background,
+                create_callback = function(self, c, index, objects) --luacheck: no unused
+                    self:get_children_by_id('clienticon')[1].client = c
+                end,
+            },
+        },
+        --border_color = '#777777',
+        -- border_width = 2,
+        ontop        = true,
+        placement    = awful.placement.centered,
+        shape        = gears.shape.rectangle,
+        visible      = false
+    }
+    
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
 
@@ -224,13 +260,13 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            s.mytaglist,
-            separator,
-        },
-        s.mytasklist, -- Middle widget
+            s.mytaglist
+       },
+        {
+            layout = wibox.layout.fixed.horizontal
+        }, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            separator,
             wibox.widget.systray(),
             -- mykeyboardlayout,
             separator,
@@ -241,6 +277,33 @@ awful.screen.connect_for_each_screen(function(s)
     }
 end)
 -- }}}
+
+awful.keygrabber {
+    keybindings = {
+        {
+            {modkey}, 'Tab', 
+            function () 
+                awful.screen.focused().mytaskmanager.visible = true
+                awful.client.focus.byidx( 1) 
+            end,
+            {description = "Next Window", group = "Desktop"}
+        },
+        {
+            {modkey, 'Shift'}, 'Tab', 
+            function () 
+                awful.screen.focused().mytaskmanager.visible = true
+                awful.client.focus.byidx( -1) 
+            end,
+            {description = "Previous Window", group = "Desktop"}
+        }
+    },
+    -- Note that it is using the key name and not the modifier name.
+    stop_key           = modkey,
+    stop_event         = 'release',
+    start_callback     = function () end,
+    stop_callback      = function () awful.screen.focused().mytaskmanager.visible = false end,
+    export_keybindings = true
+}
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
@@ -287,11 +350,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "Return", awful.client.urgent.jumpto,
               {description = "Focus on Urgent Window", group = "Desktop"}),
             
-    awful.key({ modkey,           }, "Tab",  function () awful.client.focus.byidx( 1) end,
-              {description = "Next Window", group = "Desktop"}),
-
-    awful.key({ modkey, "Shift"   }, "Tab",  function () awful.client.focus.byidx( -1) end,
-              {description = "Previous Window", group = "Desktop"}),
+              
 
     awful.key({ modkey,           }, "Insert", function () awful.tag.incnmaster( 1, nil, true) end,
               {description = "Add Main Window", group = "Desktop"}),
@@ -341,8 +400,7 @@ globalkeys = gears.table.join(
               {description = "capture a screenshot of active window", group = "screenshot"}),
     awful.key({"Shift"            }, "Print", function () awful.spawn.with_shell("sleep 0.1 && /usr/bin/i3-scrot -s")   end,
               {description = "capture a screenshot of selection", group = "screenshot"}),
-              
-              ]]
+    ]]
 )
 
 -- Build out the launcher keys.

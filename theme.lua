@@ -34,7 +34,8 @@ theme.border_marked = "#6510CC"
 theme.hotkeys_modifiers_fg = "#2EB398"
 
 -- No Icons on the tab strip. 
-theme.tasklist_disable_icon = true
+theme.tasklist_disable_icon = false
+theme.tasklist_disable_task_name = true
 
 -- There are other variable sets
 -- overriding the default one when
