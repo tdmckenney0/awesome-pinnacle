@@ -70,8 +70,6 @@ awful.layout.layouts = {
     awful.layout.suit.fair.horizontal,
     awful.layout.suit.spiral,
     awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
-    ---awful.layout.suit.max.fullscreen,
     awful.layout.suit.magnifier,
     awful.layout.suit.corner.nw,
     awful.layout.suit.corner.ne,
@@ -305,7 +303,18 @@ globalkeys = gears.table.join(
               {description = "Add Column", group = "Desktop"}),
 
     awful.key({ modkey, "Shift"   }, "Delete", function () awful.tag.incncol( -1, nil, true) end,
-              {description = "Remove Column", group = "Desktop"})
+              {description = "Remove Column", group = "Desktop"}),
+
+    awful.key({ modkey, "Control" }, "m",
+              function ()
+                  local c = awful.client.restore()
+                  -- Focus restored client
+                  if c then
+                      client.focus = c
+                      c:raise()
+                  end
+              end,
+              {description = "Restore Minimized", group = "Desktop"})
 
     -- Window Magic
     --[[ awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -332,18 +341,7 @@ globalkeys = gears.table.join(
               {description = "capture a screenshot of active window", group = "screenshot"}),
     awful.key({"Shift"            }, "Print", function () awful.spawn.with_shell("sleep 0.1 && /usr/bin/i3-scrot -s")   end,
               {description = "capture a screenshot of selection", group = "screenshot"}),
-
-    awful.key({ modkey, "Control" }, "n",
-              function ()
-                  local c = awful.client.restore()
-                  -- Focus restored client
-                  if c then
-                      client.focus = c
-                      c:raise()
-                  end
-              end,
-              {description = "restore minimized", group = "client"})
-
+              
               ]]
 )
 
@@ -358,53 +356,38 @@ for i = 1, 12 do
 end
 
 clientkeys = gears.table.join(
-    awful.key({ modkey,           }, "f",
+    awful.key({ modkey }, "space",
         function (c)
             c.fullscreen = not c.fullscreen
             c:raise()
         end,
-        {description = "toggle fullscreen", group = "Window"}),
-    awful.key({ modkey,           }, "x",      function (c) c:kill()                         end,
-              {description = "close", group = "Window"}),
-    awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
-              {description = "toggle floating", group = "Window"}),
-    awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
-              {description = "move to master", group = "Window"}),
-    awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
-              {description = "move to screen", group = "Window"}),
-    awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
-              {description = "toggle keep on top", group = "Window"}),
-    awful.key({ modkey,           }, "n",
+        {description = "Toggle Fullscreen", group = "Window"}),
+
+    awful.key({ modkey,           }, "x",      function (c) c:kill() end,
+              {description = "Close", group = "Window"}),
+
+    awful.key({ modkey            }, "f",  awful.client.floating.toggle,
+              {description = "Toggle Floating", group = "Window"}),
+
+    awful.key({ modkey,           }, "p",      function (c) c.ontop = not c.ontop end,
+              {description = "Toggle Keep on Top", group = "Window"}),
+
+    awful.key({ modkey,           }, "m",
         function (c)
             -- The client currently has the input focus, so it cannot be
             -- minimized, since minimized clients can't have the focus.
             c.minimized = true
-        end ,
-        {description = "minimize", group = "Window"}),
-    awful.key({ modkey,           }, "m",
-        function (c)
-            c.maximized = not c.maximized
-            c:raise()
-        end ,
-        {description = "(un)maximize", group = "Window"}),
-    awful.key({ modkey, "Control" }, "m",
-        function (c)
-            c.maximized_vertical = not c.maximized_vertical
-            c:raise()
-        end ,
-        {description = "(un)maximize vertically", group = "Window"}),
-    awful.key({ modkey, "Shift"   }, "m",
-        function (c)
-            c.maximized_horizontal = not c.maximized_horizontal
-            c:raise()
-        end ,
-        {description = "(un)maximize horizontally", group = "Window"}),
+        end,
+        {description = "Minimize", group = "Window"}),
     
-    awful.key({ modkey, "Control" }, "t",
-        function (c)
-            awful.titlebar.toggle(c)
-        end ,
-        {description = "Toggle Titlebar", group = "Window"})
+    awful.key({ modkey }, "t",  function (c) awful.titlebar.toggle(c) end,
+        {description = "Toggle Titlebar", group = "Window"}) --[[,
+
+     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
+        {description = "move to master", group = "Window"}),
+    
+    awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
+              {description = "move to screen", group = "Window"}) ]]
 )
 
 -- Bind all key numbers to tags.
@@ -590,11 +573,9 @@ client.connect_signal("request::titlebars", function(c)
         },
         { -- Right
             awful.titlebar.widget.floatingbutton (c),
-            awful.titlebar.widget.stickybutton   (c),
-            awful.titlebar.widget.ontopbutton    (c),
-            awful.titlebar.widget.maximizedbutton(c),
+            awful.titlebar.widget.stickybutton (c),
+            awful.titlebar.widget.ontopbutton (c),
             awful.titlebar.widget.closebutton(c),
-            
             layout = wibox.layout.fixed.horizontal()
         },
         layout = wibox.layout.align.horizontal
@@ -605,6 +586,19 @@ client.connect_signal("request::titlebars", function(c)
    --     awful.titlebar.hide(c)
    -- end
 end)
+
+-- No Maximized Windows!
+client.connect_signal("property::maximized", function(c)
+    c.maximized = false;
+end);
+
+client.connect_signal("property::maximized_vertical", function(c)
+    c.maximized_vertical = false;
+end);
+
+client.connect_signal("property::maximized_horizontal", function(c)
+    c.maximized_horizontal = false;
+end);
 
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
@@ -625,18 +619,15 @@ for s = 1, screen.count() do screen[s]:connect_signal("arrange", function ()
 
   for _, c in pairs(clients) do
     -- No borders with only one humanly visible client
-    if c.maximized then
-      -- NOTE: also handled in focus, but that does not cover maximizing from a
-      -- tiled state (when the client had focus).
-      c.border_width = 0
-    elseif c.floating or layout == "floating" then
-      c.border_width = beautiful.border_width
+    if c.floating or layout == "floating" then
+        c.border_width = beautiful.border_width
     elseif layout == "max" or layout == "fullscreen" then
-      c.border_width = 0
+        c.border_width = 0
     else
       local tiled = awful.client.tiled(c.screen)
       if #tiled == 1 then -- and c == tiled[1] then
-        tiled[1].border_width = 0
+        tiled[1].border_width = beautiful.border_width
+        tiled[1].border_color  = beautiful.border_normal
         -- if layout ~= "max" and layout ~= "fullscreen" then
         -- XXX: SLOW!
         -- awful.client.moveresize(0, 0, 2, 0, tiled[1])
@@ -650,7 +641,5 @@ end)
 end
 
 -- }}}
-
-
 
 awful.spawn.with_shell("~/.config/autorun.sh")
