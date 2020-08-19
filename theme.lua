@@ -11,9 +11,9 @@ theme = {}
 
 -- theme.font                                      = "CozetteVector Regular 12"
 theme.font              = "Input Sans Regular 12"
-theme.notification_font = "Input Sans Regular 14"
+theme.notification_font = "Input Sans Regular 12"
 
-theme.useless_gap 	    =  dpi(10)
+theme.useless_gap 	    =  dpi(12)
 
 theme.bg_normal   = "#000000" -- "#"
 theme.bg_focus    = "#222222"
@@ -47,8 +47,8 @@ theme.tasklist_disable_icon = true
 --theme.taglist_bg_focus = "#ff0000"
 
 -- Display the taglist squares
-theme.taglist_squares_sel   = themes_path .. "/cesious/taglist/squarefw.png"
-theme.taglist_squares_unsel = themes_path .. "/cesious/taglist/squarew.png"
+-- theme.taglist_squares_sel   = themes_path .. "/cesious/taglist/squarefw.png"
+-- theme.taglist_squares_unsel = themes_path .. "/cesious/taglist/squarew.png"
 
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
