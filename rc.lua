@@ -85,7 +85,12 @@ launchers = {
     terminal,
     filemanager,
     browser,
-    gui_editor
+    gui_editor,
+    terminal .. " --hold -e alsamixer",
+    terminal .. " --hold -e xprop",
+    "xkill",
+    terminal .. " --hold -e neofetch",
+    terminal .. " --hold -e ranger",
 }
 
 -- {{{ Helper functions
