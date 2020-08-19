@@ -502,7 +502,9 @@ clientbuttons = gears.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise()
                  mymainmenu:hide() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
-    awful.button({ modkey }, 3, awful.mouse.client.resize))
+    awful.button({ modkey }, 3, awful.mouse.client.resize),
+    awful.button({ modkey }, 4, function (c) c.opacity = math.min(c.opacity + 0.1, 1.0) end),
+    awful.button({ modkey }, 5, function (c) c.opacity = math.max(c.opacity - 0.1, 0.1) end))
 
 -- Set keys
 root.keys(globalkeys)
