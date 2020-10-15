@@ -84,11 +84,13 @@ launchers = {
     filemanager,
     browser,
     gui_editor,
+    filemanager .. " /usr/share/applications",
+    terminal .. " -e htop",
     terminal .. " --hold -e alsamixer",
     terminal .. " --hold -e xprop",
     "xkill",
     terminal .. " --hold -e neofetch",
-    terminal .. " --hold -e ranger",
+    terminal .. " --hold -e ranger"
 }
 
 -- {{{ Helper functions
@@ -216,7 +218,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytaskmanager = awful.popup {
         widget = awful.widget.tasklist {
             screen   = s,
-            filter   = awful.widget.tasklist.filter.currenttags,
+            filter   = awful.widget.tasklist.filter.alltags,
             buttons  = tasklist_buttons,
             style    = {
                 shape = gears.shape.rectangle,
