@@ -442,10 +442,10 @@ clientkeys = gears.table.join(
             -- minimized, since minimized clients can't have the focus.
             c.minimized = true
         end,
-        {description = "Minimize", group = "Window"}),
+        {description = "Minimize", group = "Window"}) --[[,
     
     awful.key({ modkey }, "t",  function (c) awful.titlebar.toggle(c) end,
-        {description = "Toggle Titlebar", group = "Window"}) --[[,
+        {description = "Toggle Titlebar", group = "Window"}) ,
 
      awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
         {description = "move to master", group = "Window"}),
@@ -561,9 +561,9 @@ awful.rules.rules = {
       }, properties = { floating = true }},
 
     -- Add titlebars to normal clients and dialogs
-    { rule_any = {type = { "dialog" } },
+   --[[  { rule_any = {type = { "dialog" } },
       properties = { titlebars_enabled = true }
-    },
+    }, ]]
 	
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
@@ -608,6 +608,7 @@ client.connect_signal("manage", function (c)
 end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
+--[[
 client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
     local buttons = gears.table.join(
@@ -651,7 +652,7 @@ client.connect_signal("request::titlebars", function(c)
    -- if not (l.name == "floating" or c.floating) then
    --     awful.titlebar.hide(c)
    -- end
-end)
+end) ]]
 
 -- No Maximized Windows!
 client.connect_signal("property::maximized", function(c)
