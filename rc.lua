@@ -117,6 +117,7 @@ myawesomemenu = {
     { "restart", awesome.restart, menubar.utils.lookup_icon("system-restart") }
 }
 myexitmenu = {
+    { "lock", "light-locker-command -l", menubar.utils.lookup_icon("system-switch-user") },
     { "log out", function() awesome.quit() end, menubar.utils.lookup_icon("system-log-out") },
     { "suspend", "systemctl suspend", menubar.utils.lookup_icon("system-suspend") },
     { "hibernate", "systemctl hibernate", menubar.utils.lookup_icon("system-suspend-hibernate") },
@@ -325,6 +326,9 @@ globalkeys = gears.table.join(
 
     awful.key({ modkey, "Control" }, "q", awesome.quit,
               {description = "Quit Awesome", group = "Awesome"}),
+
+    awful.key({ modkey, "Control" }, "l", function () awful.spawn.with_shell("light-locker-command -l") end,
+              {description = "Lock Awesome", group = "Awesome"}),
 
     awful.key({ modkey,           }, "h", hotkeys_popup.show_help,
               {description="Show Help", group="Awesome"}),
