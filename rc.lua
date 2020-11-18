@@ -433,8 +433,11 @@ clientkeys = gears.table.join(
     awful.key({ modkey            }, "f",  awful.client.floating.toggle,
               {description = "Toggle Floating", group = "Window"}),
 
-    awful.key({ modkey,           }, "p",      function (c) c.ontop = not c.ontop end,
+    awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop end,
               {description = "Toggle Keep on Top", group = "Window"}),
+    
+    awful.key({ modkey,           }, "p",      function (c) c.sticky = not c.sticky end,
+              {description = "Toggle Show on all Desktops", group = "Window"}),
 
     awful.key({ modkey,           }, "m",
         function (c)
@@ -443,9 +446,6 @@ clientkeys = gears.table.join(
             c.minimized = true
         end,
         {description = "Minimize", group = "Window"}) --[[,
-    
-    awful.key({ modkey }, "t",  function (c) awful.titlebar.toggle(c) end,
-        {description = "Toggle Titlebar", group = "Window"}) ,
 
      awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
         {description = "move to master", group = "Window"}),
@@ -559,39 +559,13 @@ awful.rules.rules = {
           "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         }
       }, properties = { floating = true }},
-
-    -- Add titlebars to normal clients and dialogs
-   --[[  { rule_any = {type = { "dialog" } },
-      properties = { titlebars_enabled = true }
-    }, ]]
 	
-    -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
 
 
 }
 -- }}}
 
 -- {{{ Signals
-
--- Turn on Titlebars when Window is set to float. 
---[[ client.connect_signal("property::floating", function (c)
-    if c.floating then
-        awful.titlebar.show(c)
-    else
-        awful.titlebar.hide(c)
-    end
- end) ]]
-
--- turn tilebars on when layout is floating
--------------------------------------------------------------------------------
---[[ awful.tag.attached_connect_signal(nil, "property::layout", function (t)
-    local float = t.layout.name == "floating"
-    for _,c in pairs(t:clients()) do
-      c.floating = float 
-    end
-end) ]]
 
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c)
@@ -606,53 +580,6 @@ client.connect_signal("manage", function (c)
         awful.placement.no_offscreen(c)
     end
 end)
-
--- Add a titlebar if titlebars_enabled is set to true in the rules.
---[[
-client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
-    local buttons = gears.table.join(
-        awful.button({ }, 1, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.move(c)
-        end),
-        awful.button({ }, 3, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.resize(c)
-        end)
-    )
-
-    awful.titlebar(c) : setup {
-        { -- Left
-            -- awful.titlebar.widget.iconwidget(c),
-            buttons = buttons,
-            layout = wibox.layout.fixed.horizontal()
-        },
-        { -- Middle
-            { -- Title
-                align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c)
-            },
-            buttons = buttons,
-            layout  = wibox.layout.flex.horizontal
-        },
-        { -- Right
-            awful.titlebar.widget.floatingbutton (c),
-            awful.titlebar.widget.stickybutton (c),
-            awful.titlebar.widget.ontopbutton (c),
-            awful.titlebar.widget.closebutton(c),
-            layout = wibox.layout.fixed.horizontal()
-        },
-        layout = wibox.layout.align.horizontal
-    }
-        -- Hide the menubar if we are not floating
-   -- local l = awful.layout.get(c.screen)
-   -- if not (l.name == "floating" or c.floating) then
-   --     awful.titlebar.hide(c)
-   -- end
-end) ]]
 
 -- No Maximized Windows!
 client.connect_signal("property::maximized", function(c)
