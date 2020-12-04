@@ -108,6 +108,23 @@ end
 -- }}}
 
 
+-- {{{ Layout Menu
+layoutmenuitems = {}
+
+for id, layout in pairs(awful.layout.layouts) do 
+    table.insert(layoutmenuitems, {
+        layout.name:gsub("^%l", string.upper), -- UC first. 
+        function () 
+            awful.layout.set(layout)
+        end,
+        ""
+    })
+end
+
+layoutmenu = awful.menu(layoutmenuitems)
+-- }}}
+
+
 -- {{{ Menu
 -- Create a launcher widget and a main menu
 myawesomemenu = {
@@ -209,8 +226,8 @@ awful.screen.connect_for_each_screen(function(s)
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox(s)
     s.mylayoutbox:buttons(gears.table.join(
-                           awful.button({ }, 1, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 3, function () awful.layout.inc(-1) end),
+                           awful.button({ }, 1, function () layoutmenu:show() end),
+                           awful.button({ }, 3, function () layoutmenu:show() end),
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
