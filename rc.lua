@@ -575,8 +575,26 @@ awful.rules.rules = {
         }
       }, properties = { floating = true }},
 	
+    -- Open these Windows on Tag "Alpha"
+    { 
+        rule_any = { 
+            class = { 
+                "discord",
+                "Signal"
+            }
+        },
+      properties = { screen = 1, tag = "Alpha" } 
+    },
 
+    -- Open these Windows on Tag "Beta"
+    { rule = { class = "Firefox" },
+      properties = { screen = 1, tag = "Beta" } 
+    },
 
+    -- Open these Windows on Tag "Gamma"
+    { rule = { class = "Steam" },
+      properties = { screen = 1, tag = "Gamma" } 
+    },
 }
 -- }}}
 
