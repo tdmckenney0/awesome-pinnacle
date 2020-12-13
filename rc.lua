@@ -655,10 +655,6 @@ for s = 1, screen.count() do screen[s]:connect_signal("arrange", function ()
       if #tiled == 1 then -- and c == tiled[1] then
         tiled[1].border_width = beautiful.border_width
         tiled[1].border_color  = beautiful.border_normal
-        -- if layout ~= "max" and layout ~= "fullscreen" then
-        -- XXX: SLOW!
-        -- awful.client.moveresize(0, 0, 2, 0, tiled[1])
-        -- end
       else
         c.border_width = beautiful.border_width
       end
