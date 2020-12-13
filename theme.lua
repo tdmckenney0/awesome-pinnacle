@@ -37,6 +37,9 @@ theme.hotkeys_modifiers_fg = "#2EB398"
 theme.tasklist_disable_icon = false
 theme.tasklist_disable_task_name = true
 
+-- System Tray
+theme.systray_icon_spacing = 15;
+
 -- There are other variable sets
 -- overriding the default one when
 -- defined, the sets are:
