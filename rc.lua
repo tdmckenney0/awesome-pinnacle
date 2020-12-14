@@ -91,6 +91,41 @@ launchers = {
     terminal .. " --hold -e ranger"
 }
 
+--- Tag Layouts
+tags = {
+    {
+        name = "Alpha",
+        config = {
+            layout = awful.layout.suit.corner.ne,
+            selected = true
+        }
+    },
+    {
+        name = "Beta",
+        config = {}
+    },
+    {
+        name = "Gamma",
+        config = {}
+    },
+    {
+        name = "Delta",
+        config = {}
+    },
+    {
+        name = "Epsilon",
+        config = {}
+    },
+    {
+        name = "Zeta",
+        config = {}
+    },
+    {
+        name = "Kappa",
+        config = {}
+    }
+}
+
 -- {{{ Helper functions
 local function client_menu_toggle_fn()
     local instance = nil
@@ -216,9 +251,15 @@ local tasklist_buttons = gears.table.join(
                                           end))
 
 awful.screen.connect_for_each_screen(function(s)
+    -- Setup tags. 
+    for id, config in pairs(tags) do 
+        local merged = gears.table.join({
+            screen = s,
+            layout = awful.layout.suit.tile
+        }, config.config)
 
-    -- Each screen has its own tag table.
-    awful.tag({ "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Kappa" }, s, awful.layout.layouts[1])
+        awful.tag.add(config.name, merged)
+    end
 
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
