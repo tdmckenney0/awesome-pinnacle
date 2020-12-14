@@ -78,17 +78,50 @@ awful.layout.layouts = {
 
 -- F1 -> F12 Launchers. 
 launchers = {
-    terminal,
-    filemanager,
-    browser,
-    gui_editor,
-    filemanager .. " /usr/share/applications",
-    terminal .. " -e htop",
-    terminal .. " --hold -e alsamixer",
-    terminal .. " --hold -e xprop",
-    "xkill",
-    terminal .. " --hold -e neofetch",
-    terminal .. " --hold -e ranger"
+    ["F1"] = {
+        name = "Launch Terminal",
+        command = terminal
+    },
+    ["F2"] = {
+        name = "Launch File Manager",
+        command = filemanager
+    },
+    ["F3"] = {
+        name = "Launch Browser (" .. browser .. ")",
+        command = browser
+    },
+    ["F4"] = {
+        name = "Launch GUI Editor (" .. gui_editor .. ")",
+        command = gui_editor
+    },
+    ["F5"] = {
+        name = "Show All Applications",
+        command = filemanager .. " /usr/share/applications"
+    },
+    ["F6"] = {
+        name = "Launch Task Manager (htop)",
+        command = terminal .. " -e htop"
+    },
+    ["F7"] = {
+        name = "Launch Sound Control (alsamixer)",
+        command = terminal .. " --hold -e alsamixer"
+    },
+    ["F8"] = {
+        name = "Window Inspector (xprop)",
+        command = terminal .. " --hold -e xprop"
+    },
+    ["F9"] = {
+        name = "Kill Window (xkill)",
+        command = "xkill"
+    },
+    ["F10"] = {
+        name = "Launch Neofetch",
+        command = terminal .. " --hold -e neofetch"
+    },
+    ["F11"] = {
+        name = "Launch Ranger",
+        command = terminal .. " --hold -e ranger"
+    }
 }
 
 --- Tag Layouts
@@ -466,13 +499,19 @@ globalkeys = gears.table.join(
 )
 
 -- Build out the launcher keys.
-for i = 1, 12 do
-    if launchers[i] ~= nil then
-        globalkeys = gears.table.join(globalkeys,
-            awful.key({ modkey     }, "F" .. i, function () awful.spawn(launchers[i]) end,
-                {description = "Launch " .. launchers[i], group = "Launcher"})
+for key, launcher in pairs(launchers) do 
+    globalkeys = gears.table.join(
+        globalkeys,
+        awful.key(
+            { modkey },
+            key,
+            function () awful.spawn(launcher.command) end,
+            {
+                description = launcher.name,
+                group = "Launcher"
+            }
         )
-    end
+    )
 end
 
 clientkeys = gears.table.join(
