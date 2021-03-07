@@ -1,17 +1,24 @@
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
+
+-- Auto Focus. 
 require("awful.autofocus")
+
 -- Widget and layout library
 local wibox = require("wibox")
+
 -- Theme handling library
 local beautiful = require("beautiful")
+
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
+
 -- Freedesktop menu
 local freedesktop = require("freedesktop")
+
 -- Enable VIM help for hotkeys widget when client with matching name is opened:
 require("awful.hotkeys_popup.keys.vim")
 
@@ -37,6 +44,11 @@ do
     end)
 end
 -- }}}
+
+-- Debugger
+local function debug(v) 
+    naughty.notify({preset=naughty.config.presets.normal, title="debug", text = gears.debug.dump_return(v, "Debugged") })
+end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
@@ -237,8 +249,6 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 darkblue    = beautiful.bg_focus
 blue        = "#9EBABA"
 red         = "#EB8F8F"
-separator = wibox.widget.textbox(' <span color="' .. blue .. '">| </span>')
-spacer = wibox.widget.textbox(' <span color="' .. blue .. '"> </span>')
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -294,14 +304,20 @@ awful.screen.connect_for_each_screen(function(s)
         awful.tag.add(config.name, merged)
     end
 
-    -- Create an imagebox widget which will contains an icon indicating which layout we're using.
-    -- We need one layoutbox per screen.
-    s.mylayoutbox = awful.widget.layoutbox(s)
+    -- Custom Layout Box.
+    s.mylayoutbox = wibox.widget.textbox(awful.layout.getname(awful.layout.get(s)):gsub("^%l", string.upper))
+
     s.mylayoutbox:buttons(gears.table.join(
                            awful.button({ }, 1, function () layoutmenu:show() end),
                            awful.button({ }, 3, function () layoutmenu:show() end),
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+
+    s:connect_signal("arrange", function ()
+        local layout = awful.layout.getname(awful.layout.get(s)):gsub("^%l", string.upper);
+        s.mylayoutbox.text = layout;
+    end)
+
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
 
@@ -345,26 +361,24 @@ awful.screen.connect_for_each_screen(function(s)
     }
     
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
+    s.mywibox = awful.wibar({ position = "top", screen = s, height = theme.menu_height })
 
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
+        expand = "none",
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
             s.mytaglist
-       },
+        },
         {
-            layout = wibox.layout.fixed.horizontal
+            layout = wibox.layout.fixed.horizontal,
+            mytextclock
         }, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            wibox.widget.systray(),
-            -- mykeyboardlayout,
-            separator,
-            mytextclock,
-            separator,
-            s.mylayoutbox,
+            wibox.layout.margin(wibox.widget.systray(), 6, theme.systray_icon_spacing, 6, 6),
+            wibox.layout.margin(s.mylayoutbox, 0, 6, 0, 0),
         },
     }
 end)
