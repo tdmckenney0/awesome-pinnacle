@@ -1,12 +1,16 @@
-# Pinnacle Theme for Awesome
+# Pinnacle
 
-Pinnacle theme for Awesome WM.
+Pinnacle theme for Awesome Window Manager.
 
-Currently a work in progress. You'll need: 
+## Requirements: 
 
+ - Cantarell Font
  - Ranger
  - Picom (optional)
  - Feh (wallpaper)
  - Alacritty
+## Help
+
+Press Super + H for help.
 
 ![desktop1.png](screenshots/desktop1.png)
