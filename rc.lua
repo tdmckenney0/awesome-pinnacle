@@ -141,7 +141,7 @@ tags = {
     {
         name = "Alpha",
         config = {
-            layout = awful.layout.suit.corner.ne,
+            layout = awful.layout.suit.fair.horizontal,
             selected = true
         }
     },
