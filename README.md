@@ -3,16 +3,12 @@
 Pinnacle theme for Awesome Window Manager.
 
 ## Requirements: 
-
  - Cantarell Font
- - Ranger
  - Picom (optional)
- - Feh (wallpaper)
- - Alacritty
 
 ## Setup
 
-1. cp `settings.example.lua` to `settings.lua`. Edit accordingly. 
+1. cp `settings.example.lua` to `settings.lua`. Configure accordingly. 
 
 ## Help
 

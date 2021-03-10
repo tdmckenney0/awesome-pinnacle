@@ -119,12 +119,12 @@ myawesomemenu = {
 }
 
 myexitmenu = {
-    { "lock", "light-locker-command -l", menubar.utils.lookup_icon("system-switch-user") },
+    { "lock", settings.lock, menubar.utils.lookup_icon("system-switch-user") },
     { "log out", function() awesome.quit() end, menubar.utils.lookup_icon("system-log-out") },
-    { "suspend", "systemctl suspend", menubar.utils.lookup_icon("system-suspend") },
-    { "hibernate", "systemctl hibernate", menubar.utils.lookup_icon("system-suspend-hibernate") },
-    { "reboot", "systemctl reboot", menubar.utils.lookup_icon("system-reboot") },
-    { "shutdown", "poweroff", menubar.utils.lookup_icon("system-shutdown") }
+    { "suspend", settings.suspend, menubar.utils.lookup_icon("system-suspend") },
+    { "hibernate", settings.hibernate, menubar.utils.lookup_icon("system-suspend-hibernate") },
+    { "reboot", settings.reboot, menubar.utils.lookup_icon("system-reboot") },
+    { "shutdown", settings.shutdown, menubar.utils.lookup_icon("system-shutdown") }
 }
 
 mymainmenu = freedesktop.menu.build({
@@ -136,6 +136,7 @@ mymainmenu = freedesktop.menu.build({
         -- other triads can be put here
     },
     after = {
+        { "Change Wallpaper", function () awful.spawn.with_shell(settings.wallpaper) end, "" },
         { "Awesome", myawesomemenu, "/usr/share/awesome/icons/awesome32.png" },
         { "Exit", myexitmenu, menubar.utils.lookup_icon("system-shutdown") },
         -- other triads can be put here
@@ -330,9 +331,6 @@ globalkeys = gears.table.join(
     awful.key({ settings.modkey, "Control" }, "q", awesome.quit,
               {description = "Quit Awesome", group = "Awesome"}),
 
-    awful.key({ settings.modkey, "Control" }, "l", function () awful.spawn.with_shell("light-locker-command -l") end,
-              {description = "Lock Awesome", group = "Awesome"}),
-
     awful.key({ settings.modkey,           }, "h", hotkeys_popup.show_help,
               {description="Show Help", group="Awesome"}),
 
@@ -341,8 +339,11 @@ globalkeys = gears.table.join(
               {description = "Toggle the menubar", group = "Launcher"}),
 
     -- Desktop Stuff
-    awful.key({ settings.modkey, "Control" }, "b", function () awful.spawn.with_shell("~/.fehbg") end,
+    awful.key({ settings.modkey, "Control" }, "b", function () awful.spawn.with_shell(settings.wallpaper) end,
               {description = "Change Desktop Wallpaper", group = "Desktop"}),
+    
+    awful.key({ settings.modkey,           }, "l", function () awful.spawn.with_shell(settings.lock) end,
+              {description = "Lock the Destkop", group = "Desktop"}),
 
     awful.key({ settings.modkey,           }, "Left", awful.tag.viewprev,
               {description = "Previous Desktop", group = "Desktop"}),
@@ -615,4 +616,8 @@ end
 
 -- }}}
 
-awful.spawn.with_shell("~/.config/autorun.sh")
+-- Wallpaper
+awful.spawn.with_shell(settings.wallpaper)
+
+-- Autorun
+awful.spawn.with_shell("~/.config/autorun.sh") 

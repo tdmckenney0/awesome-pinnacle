@@ -11,9 +11,17 @@ settings.modkey = "Mod4"
 
 -- Applications
 settings.browser = "exo-open --launch WebBrowser" or "firefox"
-settings.filemanager = "exo-open --launch FileManager" or "thunar"
+settings.filemanager = "exo-open --launch FileManager" or "nautilus"
 settings.gui_editor = "code"
 settings.terminal = "alacritty"
+settings.wallpaper = '~/.fehbg';
+
+-- System Control
+settings.lock = "i3lock -c 000000 -b";
+settings.suspend = "systemctl suspend";
+settings.hibernate = "systemctl hibernate";
+settings.reboot = "systemctl reboot"
+settings.shutdown = "poweroff";
 
 -- Launchers. 
 settings.launchers = {
