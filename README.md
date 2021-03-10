@@ -9,6 +9,11 @@ Pinnacle theme for Awesome Window Manager.
  - Picom (optional)
  - Feh (wallpaper)
  - Alacritty
+
+## Setup
+
+1. cp `settings.example.lua` to `settings.lua`. Edit accordingly. 
+
 ## Help
 
 Press Super + H for help.
