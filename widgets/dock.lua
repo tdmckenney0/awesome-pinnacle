@@ -30,6 +30,27 @@ return function (s, settings, awful, gears, wibox, theme, debug)
         c:raise()
     end
 
+    local focusNextGlobalClient = function (step)
+        step = step or 1;
+
+        local clients = client.get();
+        local focused = client.focus or clients[1];
+
+        for i, c in pairs(clients) do
+            if c == focused then
+                local index = i + step;
+
+                if type(clients[index]) == 'client' then
+                    focusClient(clients[index]);
+                else
+                    focusClient(clients[1])
+                end
+
+                return;
+            end
+        end
+    end
+
     local buttons = gears.table.join(
         awful.button({ }, 1, function (c)
             if c == client.focus then
@@ -42,11 +63,11 @@ return function (s, settings, awful, gears, wibox, theme, debug)
         awful.button({ settings.modkey }, 3, function () end), -- right click
 
         awful.button({ }, 4, function ()
-            awful.client.focus.byidx(1)
+            focusNextGlobalClient(1)
         end),
 
         awful.button({ }, 5, function ()
-            awful.client.focus.byidx(-1)
+            focusNextGlobalClient(-1)
         end),
 
         awful.button({ settings.modkey }, 4, function ()
@@ -137,6 +158,30 @@ return function (s, settings, awful, gears, wibox, theme, debug)
         end
     end
 
+    local enableDockMouseEvents = function ()
+        dock:connect_signal("mouse::leave", timeoutHide);
+        dock:connect_signal("mouse::enter", triggerShow);
+    end
+
+    local disableDockMouseEvents = function ()
+        dock:disconnect_signal("mouse::leave", timeoutHide);
+        dock:disconnect_signal("mouse::enter", triggerShow);
+    end
+
+    local onArrange = function () 
+        local layout = awful.layout.getname(awful.layout.get(s))
+
+        if layout == "floating" then
+            dock:disconnect_signal("mouse::leave", timeoutHide);
+            dock:disconnect_signal("mouse::enter", triggerShow);
+            triggerShow();
+        else
+            dock:connect_signal("mouse::leave", timeoutHide);
+            dock:connect_signal("mouse::enter", triggerShow);
+            timeoutHide();
+        end
+    end
+
     --[[
     tag.connect_signal("property::selected", function(t)
         local s = t.screen or awful.screen.focused()
@@ -155,14 +200,14 @@ return function (s, settings, awful, gears, wibox, theme, debug)
             {
                 {settings.modkey}, 'Tab', 
                 function () 
-                    awful.client.focus.byidx( 1) 
+                    focusNextGlobalClient(1);
                 end,
                 {description = "Next Window", group = "Desktop"}
             },
             {
                 {settings.modkey, 'Shift'}, 'Tab', 
                 function () 
-                    awful.client.focus.byidx( -1) 
+                    focusNextGlobalClient(-1);
                 end,
                 {description = "Previous Window", group = "Desktop"}
             }
@@ -170,11 +215,18 @@ return function (s, settings, awful, gears, wibox, theme, debug)
         -- Note that it is using the key name and not the modifier name.
         stop_key           = settings.modkey,
         stop_event         = 'release',
-        start_callback     = triggerShow,
-        stop_callback      = function ()
+        start_callback     = function ()
+            s:disconnect_signal("arrange", onArrange);
+            disableDockMouseEvents();
+            triggerShow();
+        end,
+        stop_callback  = function ()
             local layout = awful.layout.getname(awful.layout.get(s));
 
-            if not layout == "floating" then
+            enableDockMouseEvents();
+            s:connect_signal("arrange", onArrange);
+
+            if layout ~= "floating" then
                 timeoutHide();
             end
         end,
@@ -198,19 +250,7 @@ return function (s, settings, awful, gears, wibox, theme, debug)
         -- widget = tasklist
     }
 
-    s:connect_signal("arrange", function () 
-        local layout = awful.layout.getname(awful.layout.get(s))
-
-        if layout == "floating" then
-            dock:disconnect_signal("mouse::leave", timeoutHide);
-            dock:disconnect_signal("mouse::enter", triggerShow);
-            triggerShow();
-        else
-            dock:connect_signal("mouse::leave", timeoutHide);
-            dock:connect_signal("mouse::enter", triggerShow);
-            timeoutHide();
-        end
-    end)
+    s:connect_signal("arrange", onArrange);
 
     return dock;
 end
