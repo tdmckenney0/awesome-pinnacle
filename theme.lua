@@ -37,4 +37,12 @@ theme.menu_width  = dpi(200)
 
 theme.icon_theme = "Pop"
 
+-- Dock
+theme.dock = {
+    height = theme.menu_height * 2,
+    height_hidden = dpi(6),
+    icon_spacing = dpi(12),
+    icon_padding = dpi(8)
+}
+
 return theme
