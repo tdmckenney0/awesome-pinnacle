@@ -25,10 +25,6 @@ theme.border_marked = "#6510CC"
 
 theme.hotkeys_modifiers_fg = "#2EB398"
 
--- No Icons on the tab strip. 
-theme.tasklist_disable_icon = false
-theme.tasklist_disable_task_name = true
-
 -- System Tray
 theme.systray_icon_spacing = 24;
 

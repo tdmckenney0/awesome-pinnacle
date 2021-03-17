@@ -14,7 +14,9 @@ return function (s, settings, awful, gears, wibox, theme, debug)
         fg = theme.fg_normal, 
         ontop = true, 
         visible = true, 
-        type = "dock"
+        type = "dock",
+        border_width = theme.border_width,
+        border_color = theme.border_normal
     });
 
     local focusClient = function (c) 
@@ -40,7 +42,9 @@ return function (s, settings, awful, gears, wibox, theme, debug)
             if c == focused then
                 local index = i + step;
 
-                if type(clients[index]) == 'client' then
+                if index == 0 then
+                    focusClient(clients[#clients]);                
+                elseif type(clients[index]) == 'client' then
                     focusClient(clients[index]);
                 else
                     focusClient(clients[1])
@@ -181,19 +185,6 @@ return function (s, settings, awful, gears, wibox, theme, debug)
             timeoutHide();
         end
     end
-
-    --[[
-    tag.connect_signal("property::selected", function(t)
-        local s = t.screen or awful.screen.focused()
-        s.myleftwibox.width = dpi(38)
-        s.layoutb.visible = true
-        mylauncher.visible = true
-        gears.surface.apply_shape_bounding(s.myleftwibox, dockshape)
-        if not s.docktimer.started then
-            s.docktimer:start()
-        end
-    end)
-    ]]
 
     awful.keygrabber {
         keybindings = {
