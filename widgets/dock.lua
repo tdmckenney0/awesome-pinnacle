@@ -38,6 +38,10 @@ return function (s, settings, awful, gears, wibox, theme, debug)
         local clients = client.get();
         local focused = client.focus or clients[1];
 
+        table.sort(clients, function(a,b)
+            return a.first_tag.index < b.first_tag.index;
+        end)
+
         for i, c in pairs(clients) do
             if c == focused then
                 local index = i + step;
