@@ -73,6 +73,7 @@ awful.layout.layouts = {
     awful.layout.suit.spiral,
     awful.layout.suit.spiral.dwindle,
     awful.layout.suit.magnifier,
+    awful.layout.suit.max, 
     awful.layout.suit.corner.nw,
     awful.layout.suit.corner.ne,
     awful.layout.suit.corner.sw,
