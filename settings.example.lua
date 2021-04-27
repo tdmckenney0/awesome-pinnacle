@@ -23,6 +23,11 @@ settings.hibernate = "systemctl hibernate";
 settings.reboot = "systemctl reboot"
 settings.shutdown = "poweroff";
 
+-- Dock
+settings.dock = {
+    timeout = 2
+}
+
 -- Launchers. 
 settings.launchers = {
     ["F1"] = {
