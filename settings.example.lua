@@ -13,7 +13,7 @@ settings.modkey = "Mod4"
 settings.browser = "exo-open --launch WebBrowser" or "firefox"
 settings.filemanager = "exo-open --launch FileManager" or "nautilus"
 settings.gui_editor = "code"
-settings.terminal = "alacritty"
+settings.terminal = "gnome-terminal"
 settings.wallpaper = '~/.fehbg';
 
 -- System Control
