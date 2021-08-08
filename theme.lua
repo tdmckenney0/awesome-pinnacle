@@ -5,7 +5,7 @@ theme = {}
 theme.font              = "Cantarell 14"
 theme.notification_font = "Cantarell 14"
 
-theme.useless_gap 	    =  dpi(12)
+theme.useless_gap 	    =  dpi(8)
 
 theme.bg_normal   = "#000000"
 theme.bg_focus    = "#222222"
