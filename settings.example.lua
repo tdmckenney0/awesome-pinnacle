@@ -17,6 +17,7 @@ settings.terminal = "gnome-terminal"
 settings.wallpaper = '~/.fehbg';
 
 -- System Control
+settings.autorun = "~/.config/autorun.sh";
 settings.lock = "i3lock -c 000000 -b";
 settings.suspend = "systemctl suspend";
 settings.hibernate = "systemctl hibernate";
