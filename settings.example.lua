@@ -24,6 +24,9 @@ settings.hibernate = "systemctl hibernate";
 settings.reboot = "systemctl reboot"
 settings.shutdown = "poweroff";
 
+-- Compositor
+settings.compositor = true;
+
 -- Dock
 settings.dock = {
     timeout = 2

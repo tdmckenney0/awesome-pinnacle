@@ -521,7 +521,9 @@ end
 awful.spawn.with_shell(settings.wallpaper)
 
 -- Picom
-awful.spawn.with_shell(string.format("picom --vsync --experimental-backends --config %s/.config/awesome/picom.conf", os.getenv("HOME")))
+if settings.compositor then 
+    awful.spawn.with_shell(string.format("picom --vsync --experimental-backends --config %s/.config/awesome/picom.conf", os.getenv("HOME")))
+end
 
 -- Autorun
 awful.spawn.with_shell(settings.autorun)
