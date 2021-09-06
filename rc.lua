@@ -247,7 +247,8 @@ awful.screen.connect_for_each_screen(function(s)
         ontop        = true,
         placement    = awful.placement.centered,
         shape        = gears.shape.rectangle,
-        visible      = false
+        visible      = false,
+        screen   = s
     }
     
     -- Create the wibox
