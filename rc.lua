@@ -531,7 +531,7 @@ client.connect_signal("request::titlebars", function(c)
 
             -- WILL EXECUTE THIS ON DOUBLE CLICK
             double_click_event_handler(function() 
-                if c.first_tag.layout ~= awful.layout.suit.floating and   then
+                if c.first_tag.layout ~= awful.layout.suit.floating then
                     c.floating = false
                 end
             end)
