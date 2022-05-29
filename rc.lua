@@ -63,6 +63,22 @@ local settings = require('settings');
 -- Load Widgets
 local TaskManager = require('widgets/TaskManager');
 
+function double_click_event_handler(double_click_event)
+    if double_click_timer then
+        double_click_timer:stop()
+        double_click_timer = nil
+
+        double_click_event()
+        
+        return
+    end
+  
+    double_click_timer = gears.timer.start_new(0.20, function()
+        double_click_timer = nil
+        return false
+    end)
+end
+
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
     awful.layout.suit.tile,
@@ -512,6 +528,13 @@ client.connect_signal("request::titlebars", function(c)
             client.focus = c
             c:raise()
             awful.mouse.client.move(c)
+
+            -- WILL EXECUTE THIS ON DOUBLE CLICK
+            double_click_event_handler(function() 
+                if c.first_tag.layout ~= awful.layout.suit.floating and   then
+                    c.floating = false
+                end
+            end)
         end),
         awful.button({ }, 3, function()
             client.focus = c
