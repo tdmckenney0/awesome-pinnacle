@@ -584,13 +584,15 @@ for s = 1, screen.count() do screen[s]:connect_signal("arrange", function ()
         c.border_width = beautiful.border_width
     elseif layout == "max" or layout == "fullscreen" then
         c.border_width = 0
+        c.first_tag.gap = 0
     else
       local tiled = awful.client.tiled(c.screen)
       if #tiled == 1 then -- and c == tiled[1] then
-        tiled[1].border_width = beautiful.border_width
-        tiled[1].border_color  = beautiful.border_normal
+        tiled[1].border_width = 0
+        c.first_tag.gap = 0
       else
         c.border_width = beautiful.border_width
+        c.first_tag.gap = theme.useless_gap
       end
     end
   end
