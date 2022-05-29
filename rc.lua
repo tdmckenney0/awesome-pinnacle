@@ -60,7 +60,7 @@ beautiful.init(string.format("%s/.config/awesome/theme.lua", os.getenv("HOME")))
 local settings = require('settings');
 
 -- Load Widgets
-local dock = require('widgets/dock');
+local TaskManager = require('widgets/TaskManager');
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
@@ -158,6 +158,7 @@ local taglist_buttons = gears.table.join(
                     awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
                 )
 
+
 awful.screen.connect_for_each_screen(function(s)
     -- Setup tags. 
     for id, config in pairs(settings.tags) do 
@@ -185,6 +186,9 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+
+    -- Create the Task Switcher
+    s.mytaskmanager = TaskManager(s, settings, awful, gears, wibox, theme, debug);
     
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s, height = theme.menu_height })
@@ -208,8 +212,6 @@ awful.screen.connect_for_each_screen(function(s)
         },
     }
 
-    -- Dock
-    s.mydock = dock(s, settings, awful, gears, wibox, theme, debug);
 end)
 -- }}}
 
