@@ -1,6 +1,7 @@
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
+local dpi   = require("beautiful.xresources").apply_dpi
 
 -- Auto Focus. 
 require("awful.autofocus")
@@ -343,8 +344,13 @@ clientkeys = gears.table.join(
     awful.key({ settings.modkey,           }, "x",      function (c) c:kill() end,
               {description = "Close", group = "Window"}),
 
-    awful.key({ settings.modkey            }, "f",  awful.client.floating.toggle,
-              {description = "Toggle Floating", group = "Window"}),
+    awful.key({ settings.modkey            }, "f", 
+            function (c) 
+                if (c.first_tag.layout.name ~= "floating") then
+                    c.floating = not c.floating 
+                end
+            end,
+            {description = "Toggle Floating", group = "Window"}),
 
     awful.key({ settings.modkey,           }, "t",      function (c) c.ontop = not c.ontop end,
               {description = "Toggle Keep on Top", group = "Window"}),
@@ -448,6 +454,16 @@ awful.rules.rules = gears.table.join(settings.rules, {
             callback = awful.client.setslave,
             placement = awful.placement.no_overlap+awful.placement.no_offscreen
         }
+    },
+
+    -- Add titlebars to normal clients and dialogs
+    { 
+        rule_any = { 
+            type = { "dialog" } 
+        },
+        properties = { 
+            titlebars_enabled = true 
+        }
     }
 })
 -- }}}
@@ -466,6 +482,70 @@ client.connect_signal("manage", function (c)
         -- Prevent clients from being unreachable after screen count changes.
         awful.placement.no_offscreen(c)
     end
+end)
+
+-- Turn on Titlebars and OnTop when Window is set to float. 
+client.connect_signal("property::floating", function (c)
+    if c.floating then
+        awful.titlebar.show(c)
+        c.ontop = true;
+    else
+        awful.titlebar.hide(c)
+        c.ontop = false;
+    end
+end)
+
+-- turn tilebars on when layout is floating
+awful.tag.attached_connect_signal(nil, "property::layout", function (t)
+    local float = t.layout.name == "floating"
+
+    for _,c in pairs(t:clients()) do
+      c.floating = float
+    end
+end)
+
+-- Add a titlebar if titlebars_enabled is set to true in the rules.
+client.connect_signal("request::titlebars", function(c)
+    -- buttons for the titlebar
+    local buttons = gears.table.join(
+        awful.button({ }, 1, function()
+            client.focus = c
+            c:raise()
+            awful.mouse.client.move(c)
+        end),
+        awful.button({ }, 3, function()
+            client.focus = c
+            c:raise()
+            awful.mouse.client.resize(c)
+        end)
+    )
+    awful.titlebar(c):setup {
+        { -- Left
+            awful.titlebar.widget.closebutton(c),
+            -- awful.titlebar.widget.iconwidget(c),
+            layout = wibox.layout.fixed.horizontal()
+        },
+        { -- Middle
+            { -- Title
+                align  = "center",
+                widget = awful.titlebar.widget.titlewidget(c)
+            },
+            buttons = buttons,
+            layout  = wibox.layout.flex.horizontal
+        },
+        { -- Right
+            awful.titlebar.widget.stickybutton (c),
+            awful.titlebar.widget.minimizebutton (c),
+            layout = wibox.layout.fixed.horizontal(),
+            spacing = dpi(24)
+        },
+        layout = wibox.layout.align.horizontal
+    }
+        -- Hide the menubar if we are not floating
+   -- local l = awful.layout.get(c.screen)
+   -- if not (l.name == "floating" or c.floating) then
+   --     awful.titlebar.hide(c)
+   -- end
 end)
 
 -- No Maximized Windows!
