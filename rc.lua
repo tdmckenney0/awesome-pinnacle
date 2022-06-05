@@ -17,9 +17,6 @@ local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 
--- Freedesktop menu
-local freedesktop = require("freedesktop")
-
 -- Enable VIM help for hotkeys widget when client with matching name is opened:
 require("awful.hotkeys_popup.keys.vim")
 
@@ -59,6 +56,7 @@ beautiful.init(string.format("%s/.config/awesome/theme.lua", os.getenv("HOME")))
 
 -- Load Configuration
 local settings = require('settings');
+local mainmenu = require("mainmenu");
 
 -- Load Widgets
 local TaskManager = require('widgets/TaskManager');
@@ -79,75 +77,7 @@ function double_click_event_handler(double_click_event)
     end)
 end
 
--- Table of layouts to cover with awful.layout.inc, order matters.
-awful.layout.layouts = {
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,    
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.magnifier,
-    awful.layout.suit.max, 
-    awful.layout.suit.corner.nw,
-    awful.layout.suit.corner.ne,
-    awful.layout.suit.corner.sw,
-    awful.layout.suit.corner.se,
-    awful.layout.suit.floating
-}
--- }}}
-
--- {{{ Layout Menu
-layoutmenuitems = {}
-
-for id, layout in pairs(awful.layout.layouts) do 
-    table.insert(layoutmenuitems, {
-        layout.name:gsub("^%l", string.upper), -- UC first. 
-        function () 
-            awful.layout.set(layout)
-        end,
-        ""
-    })
-end
-
-layoutmenu = awful.menu(layoutmenuitems)
--- }}}
-
--- {{{ Menu
--- Create a launcher widget and a main menu
-myawesomemenu = {
-    { "hotkeys", function() return false, hotkeys_popup.show_help end, menubar.utils.lookup_icon("preferences-desktop-keyboard-shortcuts") },
-    { "manual", settings.terminal .. " -e man awesome", menubar.utils.lookup_icon("system-help") },
-    { "edit config", settings.gui_editor .. " " .. awesome.conffile,  menubar.utils.lookup_icon("accessories-text-editor") },
-    { "restart", awesome.restart, menubar.utils.lookup_icon("system-restart") }
-}
-
-myexitmenu = {
-    { "lock", settings.lock, menubar.utils.lookup_icon("system-switch-user") },
-    { "log out", function() awesome.quit() end, menubar.utils.lookup_icon("system-log-out") },
-    { "suspend", settings.suspend, menubar.utils.lookup_icon("system-suspend") },
-    { "hibernate", settings.hibernate, menubar.utils.lookup_icon("system-suspend-hibernate") },
-    { "reboot", settings.reboot, menubar.utils.lookup_icon("system-reboot") },
-    { "shutdown", settings.shutdown, menubar.utils.lookup_icon("system-shutdown") }
-}
-
-mymainmenu = freedesktop.menu.build({
-    icon_size = 32,
-    before = {
-        { "Terminal", settings.terminal, menubar.utils.lookup_icon("utilities-terminal") },
-        { "Browser", settings.browser, menubar.utils.lookup_icon("internet-web-browser") },
-        { "Files", settings.filemanager, menubar.utils.lookup_icon("system-file-manager") },
-        -- other triads can be put here
-    },
-    after = {
-        { "Change Wallpaper", function () awful.spawn.with_shell(settings.wallpaper) end, "" },
-        { "Awesome", myawesomemenu, "/usr/share/awesome/icons/awesome32.png" },
-        { "Exit", myexitmenu, menubar.utils.lookup_icon("system-shutdown") },
-        -- other triads can be put here
-    }
-})
+layoutmenu = require('layoutmenu');
 
 -- Menubar configuration
 menubar.utils.terminal = settings.terminal -- Set the terminal for applications that require it
@@ -234,8 +164,8 @@ end)
 
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
-	awful.button({ }, 1, function () mymainmenu:hide() end),
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
+	awful.button({ }, 1, function () mainmenu:hide() end),
+    awful.button({ }, 3, function () mainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
@@ -367,7 +297,7 @@ clientkeys = gears.table.join(
                 end
             end,
             {description = "Toggle Floating", group = "Window"}),
-
+    
     awful.key({ settings.modkey,           }, "t",      function (c) c.ontop = not c.ontop end,
               {description = "Toggle Keep on Top", group = "Window"}),
     
@@ -441,7 +371,7 @@ end
 
 clientbuttons = gears.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise()
-                 mymainmenu:hide() end),
+                 mainmenu:hide() end),
     awful.button({ settings.modkey }, 1, awful.mouse.client.move),
     awful.button({ settings.modkey }, 3, awful.mouse.client.resize),
     awful.button({ settings.modkey }, 4, function (c) c.opacity = math.min(c.opacity + 0.1, 1.0) end),
