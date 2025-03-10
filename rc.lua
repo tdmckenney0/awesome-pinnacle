@@ -189,7 +189,7 @@ globalkeys = gears.table.join(
               {description = "Toggle the menubar", group = "Launcher"}),
 
     -- Desktop Stuff
-    awful.key({ settings.modkey, "Control" }, "b", function () awful.spawn.with_shell(settings.wallpaper) end,
+    awful.key({ settings.modkey,           }, "b", function () awful.spawn.with_shell(settings.wallpaper) end,
               {description = "Change Desktop Wallpaper", group = "Desktop"}),
     
     awful.key({ settings.modkey,           }, "l", function () awful.spawn.with_shell(settings.lock) end,
