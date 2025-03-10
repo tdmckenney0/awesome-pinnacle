@@ -1,6 +1,9 @@
 -- Freedesktop menu
 local freedesktop = require("freedesktop")
 
+-- Awful
+local awful = require("awful")
+
 -- Load Configuration
 local settings = require('settings');
 
