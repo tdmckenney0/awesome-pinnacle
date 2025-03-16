@@ -176,7 +176,7 @@ clientbuttons = gears.table.join(
     awful.button({ settings.modkey }, 5, function (c) c.opacity = math.max(c.opacity - 0.1, 0.1) end))
 
 -- Set keys
-local globalkeys = require('config/globalkeys')(settings, awful, gears)
+local globalkeys = require('config/globalkeys')(settings, awful, gears, menubar)
 
 root.keys(globalkeys)
 
