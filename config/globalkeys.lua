@@ -1,7 +1,7 @@
 --[[
 	Global key configuration
 ]]
-return function(settings, awful, gears)
+return function(settings, awful, gears, menubar)
 	local hotkeys_popup = require("awful.hotkeys_popup").widget
 
 	-- Enable VIM help for hotkeys widget when client with matching name is opened:
