@@ -237,7 +237,10 @@ end)
 -- Turn on Titlebars and OnTop when Window is set to float. 
 client.connect_signal("property::floating", function (c)
     if c.floating then
-        awful.titlebar.show(c)
+        if c.requests_no_titlebar ~= true then
+            awful.titlebar.show(c)
+        end
+
         c.ontop = true;
     else
         awful.titlebar.hide(c)
@@ -256,49 +259,52 @@ end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
-    -- buttons for the titlebar
-    local buttons = gears.table.join(
-        awful.button({ }, 1, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.move(c)
 
-            -- WILL EXECUTE THIS ON DOUBLE CLICK
-            double_click_event_handler(function() 
-                if c.first_tag.layout ~= awful.layout.suit.floating then
-                    c.floating = false
-                end
+    if not c.requests_no_titlebar then
+        -- buttons for the titlebar
+        local buttons = gears.table.join(
+            awful.button({ }, 1, function()
+                client.focus = c
+                c:raise()
+                awful.mouse.client.move(c)
+
+                -- WILL EXECUTE THIS ON DOUBLE CLICK
+                double_click_event_handler(function() 
+                    if c.first_tag.layout ~= awful.layout.suit.floating then
+                        c.floating = false
+                    end
+                end)
+            end),
+            awful.button({ }, 3, function()
+                client.focus = c
+                c:raise()
+                awful.mouse.client.resize(c)
             end)
-        end),
-        awful.button({ }, 3, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.resize(c)
-        end)
-    )
-    awful.titlebar(c):setup {
-        { -- Left
-            awful.titlebar.widget.closebutton(c),
-            -- awful.titlebar.widget.iconwidget(c),
-            layout = wibox.layout.fixed.horizontal()
-        },
-        { -- Middle
-            { -- Title
-                align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c)
+        )
+        awful.titlebar(c):setup {
+            { -- Left
+                awful.titlebar.widget.closebutton(c),
+                -- awful.titlebar.widget.iconwidget(c),
+                layout = wibox.layout.fixed.horizontal()
             },
-            buttons = buttons,
-            layout  = wibox.layout.flex.horizontal
-        },
-        { -- Right
-            awful.titlebar.widget.stickybutton (c),
-            awful.titlebar.widget.minimizebutton (c),
-            layout = wibox.layout.fixed.horizontal(),
-            spacing = dpi(24)
-        },
-        layout = wibox.layout.align.horizontal
-    }
-        -- Hide the menubar if we are not floating
+            { -- Middle
+                { -- Title
+                    align  = "center",
+                    widget = awful.titlebar.widget.titlewidget(c)
+                },
+                buttons = buttons,
+                layout  = wibox.layout.flex.horizontal
+            },
+            { -- Right
+                awful.titlebar.widget.stickybutton (c),
+                awful.titlebar.widget.minimizebutton (c),
+                layout = wibox.layout.fixed.horizontal(),
+                spacing = dpi(24)
+            },
+            layout = wibox.layout.align.horizontal
+        }
+    end
+    -- Hide the menubar if we are not floating
    -- local l = awful.layout.get(c.screen)
    -- if not (l.name == "floating" or c.floating) then
    --     awful.titlebar.hide(c)
